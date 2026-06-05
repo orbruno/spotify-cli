@@ -3,6 +3,7 @@
 **Sprint Goal**: `spotify-cli auth login`, `auth status`, and `auth logout` all work correctly with structured JSON output; TC-01 through TC-08 from SPEC-001 §2.6 pass with ≥80% coverage.
 **Mode**: Fully autonomous — `--dangerously-skip-permissions`, no human intervention.
 **Total**: 2 stories, 6pts. Builds on top of Sprint-01 codebase (`spotify_cli/`).
+**Branch**: `sprint/2026-W23` | **PR**: https://github.com/orbruno/spotify-cli/pull/1
 
 ---
 

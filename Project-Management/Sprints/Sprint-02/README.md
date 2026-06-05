@@ -5,6 +5,8 @@
 **Status**: ⏳ Planned
 **Start**: TBD
 **Developer**: Orlando Bruno
+**Branch**: `sprint/2026-W23`
+**PR**: https://github.com/orbruno/spotify-cli/pull/1
 
 ---
 

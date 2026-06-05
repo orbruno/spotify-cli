@@ -34,15 +34,15 @@ Project-Management/
 
 ## Quick Links
 
-- **Current Sprint**: [Sprints/Sprint-01/sprint-backlog.md](Sprints/Sprint-01/sprint-backlog.md)
+- **Current Sprint**: [Sprints/Sprint-02/sprint-backlog.md](Sprints/Sprint-02/sprint-backlog.md)
 - **Product Backlog**: [Backlog/Product-Backlog.md](Backlog/Product-Backlog.md)
 - **Project Charter**: [project-charter.md](project-charter.md)
 
 ## Current Status
 
 **Active Epic(s)**: EP-001: Authentication & Setup
-**Sprint**: Sprint-01 in progress
-**Sprint Goal**: Running `uv run spotify-cli --help` works, `SpotifyPKCE` client factory is wired up with `CACHE_PATH`, and `require_client_id()` guard is in place.
+**Sprint**: Sprint-02 planned
+**Sprint Goal**: `spotify-cli auth login`, `auth status`, and `auth logout` all work correctly; TC-01 through TC-08 from SPEC-001 pass with ≥80% coverage.
 
 ### Progress Summary
 
