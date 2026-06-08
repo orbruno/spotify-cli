@@ -4,7 +4,7 @@
 **Story ID**: E1-S4
 **Story Points**: 3
 **Priority**: High
-**Status**: To Do
+**Status**: ✅ Done
 
 ## User Story
 
@@ -24,14 +24,16 @@ Implement the `status` and `logout` commands in `auth/commands.py`, then write t
 
 ## Acceptance Criteria
 
-- [ ] `auth status` with valid cached token → JSON with `status: "valid"` and positive `expires_in_seconds`, exit 0
-- [ ] `auth status` with expired token → JSON with `status: "expired"` and negative `expires_in_seconds`, exit 0
-- [ ] `auth status` with no cache file → `{"status": "missing"}`, exit 0
-- [ ] `auth logout` with cache present → deletes file, returns `{"status": "logged_out"}`, exit 0
-- [ ] `auth logout` with no cache file → returns `{"status": "no_session"}`, exit 0 (idempotent)
-- [ ] All TC-01 through TC-08 from SPEC-001 §2.6 pass via `uv run pytest tests/auth/`
-- [ ] No live Spotify API calls in the test suite
-- [ ] `uv run pytest tests/auth/ --cov=spotify_cli/auth --cov=spotify_cli/core --cov-fail-under=80` passes
+- [x] `auth status` with valid cached token → JSON with `status: "valid"` and positive `expires_in_seconds`, exit 0 — TC-04 (automated)
+- [x] `auth status` with expired token → JSON with `status: "expired"` and negative `expires_in_seconds`, exit 0 — `test_status_expired_token` (automated)
+- [x] `auth status` with no cache file → `{"status": "missing"}`, exit 0 — TC-05 (automated)
+- [x] `auth status` with cache file present but `get_cached_token()` returns `None` → `{"status": "missing"}`, exit 0 — `test_status_cached_token_none` (automated)
+- [x] `auth status` works without `SPOTIFY_CLIENT_ID` when cache exists — `test_status_with_cache_no_client_id` (automated)
+- [x] `auth logout` with cache present → deletes file, returns `{"status": "logged_out"}`, exit 0 — TC-06 (automated)
+- [x] `auth logout` with no cache file → returns `{"status": "no_session"}`, exit 0 (idempotent) — TC-07 (automated)
+- [x] All TC-01 through TC-08 from SPEC-001 §2.6 pass via `uv run pytest tests/auth/` (TC-08 reworked: asserts `login()` calls `get_access_token(as_dict=False)`; true silent-refresh is manual verification — see `Sprints/Sprint-02/manual-verification.md`)
+- [x] No live Spotify API calls in the test suite
+- [x] `uv run pytest tests/auth/ --cov=spotify_cli/auth --cov=spotify_cli/core --cov-fail-under=80` passes (achieved 100%)
 
 ## Technical Notes
 
@@ -236,13 +238,13 @@ def test_silent_refresh(monkeypatch):
 
 ## Definition of Done
 
-- [ ] Code implemented and follows conventions
-- [ ] All acceptance criteria met
-- [ ] All TC-01 through TC-08 passing via `uv run pytest tests/auth/ -v`
-- [ ] Coverage ≥80%: `uv run pytest tests/auth/ --cov=spotify_cli/auth --cov=spotify_cli/core --cov-fail-under=80`
-- [ ] Self-reviewed
-- [ ] No live Spotify API calls in test suite
-- [ ] No known bugs or issues
+- [x] Code implemented and follows conventions
+- [x] All acceptance criteria met (automated)
+- [x] All TC-01 through TC-08 passing via `uv run pytest tests/auth/ -v` (TC-08 reworked — see AC note)
+- [x] Coverage ≥80%: `uv run pytest tests/auth/ --cov=spotify_cli/auth --cov=spotify_cli/core --cov-fail-under=80` (achieved 100%)
+- [x] Self-reviewed
+- [x] No live Spotify API calls in test suite
+- [x] No known bugs or issues
 
 ## Dependencies
 
@@ -264,9 +266,11 @@ def test_silent_refresh(monkeypatch):
 - SPEC-001 §2.6 TC-07 uses `{"status": "no_cache"}` but the user instructions specify `{"status": "no_session"}` — this story follows the user instructions; update SPEC-001 if needed
 - Typer `CliRunner` merges stderr into `.output` — TC-02 asserts on `.output`, not `.stderr`; this is documented in the test
 - SPEC-001 §3.3 (T-10, T-11, T-13) and §3.4 (T-14 through T-21) map to the tasks in this story
-- `status()` does not call `require_client_id()` before checking for the cache file — reading a missing cache does not require env vars
+- `status()` does not call `require_client_id()` at all — cache inspection uses `get_cached_token()` helper which reads the cache file directly via `CacheFileHandler`, independent of `SPOTIFY_CLIENT_ID`
+- TC-08 reworked: the original test only asserted `kwargs.get("open_browser") is not False` (a weak truthy check on default flag handling, not refresh). The reworked test asserts `mock_manager.get_access_token.assert_called_once_with(as_dict=False)` — verifying `login()` honors its contract with Spotipy. True silent-refresh remains owned by Spotipy and is verified manually
 
 ---
 
 **Created**: 2026-06-04
-**Status**: Ready for Sprint Planning
+**Completed**: 2026-06-08
+**Status**: ✅ Done

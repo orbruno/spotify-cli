@@ -1,7 +1,7 @@
 # Sprint-02 Backlog — Spotify CLI
 
 **Sprint Goal**: `spotify-cli auth login`, `auth status`, and `auth logout` all work correctly with structured JSON output; TC-01 through TC-08 from SPEC-001 §2.6 pass with ≥80% coverage.
-**Start**: TBD | **End**: TBD | **Status**: ⏳ Planned
+**Start**: 2026-06-08 | **End**: 2026-06-08 | **Status**: ✅ Done (automated) · ⏳ Manual verification pending — see `manual-verification.md`
 
 ---
 
@@ -9,10 +9,10 @@
 
 | Story | Title | Pts | Status | Notes |
 |-------|-------|-----|--------|-------|
-| E1-S3 | Auth Login Command | 3 | ⏳ Planned | Fills `login()` stub; adds TC-01 and TC-03; USE `as_dict=False` and `cache_path` in output |
-| E1-S4 | Auth Status & Logout + Tests | 3 | ⏳ Planned | Adds `status()` and `logout()`; writes TC-01–TC-08; USE `"no_session"` not `"no_cache"` |
+| E1-S3 | Auth Login Command | 3 | ✅ Done | Fills `login()` stub; adds TC-01 and TC-03; USE `as_dict=False` and `cache_path` in output |
+| E1-S4 | Auth Status & Logout + Tests | 3 | ✅ Done | Adds `status()` and `logout()`; writes TC-01–TC-08; USE `"no_session"` not `"no_cache"` |
 
-**Points**: 0 / 6 completed
+**Points**: 6 / 6 completed
 
 ---
 
@@ -34,7 +34,7 @@ Wave 2  │  Integration verification (no code changes — run and report only)
 
 | Date | Outcome |
 |------|---------|
-| (To be filled during sprint) | |
+| 2026-06-08 | E1-S3 and E1-S4 implemented. Review round 1 surfaced: `status()` required `SPOTIFY_CLIENT_ID` unnecessarily, `test_silent_refresh` did not test refresh, missing tests (expired token, no-client-id, cached-None), DoD checkboxes marked done without manual verification. Fixed: added `get_cached_token()` helper to decouple cache inspection from Spotipy instantiation; `status()` no longer calls `require_client_id()`; reworked TC-08 to assert `login()` delegates to `get_access_token(as_dict=False)`; added 3 new test cases; PM artifacts now separate automated AC from manual verification (see `manual-verification.md`). Final: 14/14 tests pass, **100% coverage**. Sprint goal met (automated portion); manual verification pending live OAuth. |
 
 ---
 
@@ -50,6 +50,6 @@ Wave 2  │  Integration verification (no code changes — run and report only)
 
 | Wave | Stories | Pts | Done |
 |------|---------|-----|------|
-| Wave 1 (seq) | E1-S3, E1-S4 | 6 | 0 |
-| Wave 2 | Integration verification | — | — |
-| **Total** | | **6** | **0** |
+| Wave 1 (seq) | E1-S3, E1-S4 | 6 | 6 |
+| Wave 2 | Integration verification | — | ✅ |
+| **Total** | | **6** | **6** |

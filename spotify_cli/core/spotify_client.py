@@ -38,3 +38,16 @@ def get_auth_manager(open_browser: bool = True) -> SpotifyPKCE:
         ),
         open_browser=open_browser,
     )
+
+
+def get_cached_token() -> dict | None:
+    """
+    Read the cached token from disk without instantiating SpotifyPKCE.
+
+    Returns the cached token dict (with ``access_token``, ``expires_at``,
+    ``scope``, etc.) or ``None`` if the cache is empty or malformed.
+    Does NOT require ``SPOTIFY_CLIENT_ID`` — pure file read.
+    """
+    return spotipy.cache_handler.CacheFileHandler(
+        cache_path=str(CACHE_PATH)
+    ).get_cached_token()

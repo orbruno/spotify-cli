@@ -4,7 +4,7 @@
 **Story ID**: E1-S3
 **Story Points**: 3
 **Priority**: High
-**Status**: To Do
+**Status**: ✅ Done (automated) · ⏳ Manual verification pending
 
 ## User Story
 
@@ -22,13 +22,13 @@ On subsequent runs with a cached refresh token, spotipy silently refreshes the a
 
 ## Acceptance Criteria
 
-- [ ] First run opens browser and captures redirect at `http://127.0.0.1:9090/callback`
-- [ ] Token written to `~/.config/spotify-cli/.cache` with permissions 600 (enforced by spotipy ≥2.25.1)
-- [ ] Subsequent runs within TTL do not open browser (silent refresh via spotipy)
-- [ ] `--no-browser` passes `open_browser=False` to factory; spotipy prints auth URL and accepts redirect URL via stdin
-- [ ] Success output is valid JSON on stdout: `{"status": "authenticated", "cache_path": "~/.config/spotify-cli/.cache"}`
-- [ ] `SPOTIFY_CLIENT_ID` missing → exit 2 with structured JSON on stderr (delegated to `require_client_id()`)
-- [ ] TC-01 and TC-03 from SPEC-001 §2.6 pass via `uv run pytest`
+- [ ] First run opens browser and captures redirect at `http://127.0.0.1:9090/callback` — **Manual verification pending** (live OAuth flow; see `Sprints/Sprint-02/manual-verification.md`)
+- [ ] Token written to `~/.config/spotify-cli/.cache` with permissions 600 (enforced by spotipy ≥2.25.1) — **Manual verification pending**
+- [ ] Subsequent runs within TTL do not open browser (silent refresh via spotipy) — **Manual verification pending** (Spotipy-owned behavior; TC-08 verifies `login()` delegates via `get_access_token(as_dict=False)`, but not the live refresh path)
+- [x] `--no-browser` passes `open_browser=False` to factory (TC-03, automated) — Spotipy's URL-print/stdin-accept behavior is **manual verification pending**
+- [x] Success output is valid JSON on stdout: `{"status": "authenticated", "cache_path": "~/.config/spotify-cli/.cache"}` — TC-01 (automated)
+- [x] `SPOTIFY_CLIENT_ID` missing → exit 2 with structured JSON on stderr — TC-02 (automated; delegated to `require_client_id()`)
+- [x] TC-01 and TC-03 from SPEC-001 §2.6 pass via `uv run pytest` (automated)
 
 ## Technical Notes
 
@@ -107,13 +107,13 @@ def test_login_no_browser():
 
 ## Definition of Done
 
-- [ ] Code implemented and follows conventions
-- [ ] All acceptance criteria met
-- [ ] TC-01 and TC-03 written and passing via `uv run pytest`
-- [ ] Manual test: `uv run spotify-cli auth login` opens browser and writes cache
-- [ ] Manual test: `stat -f "%A" ~/.config/spotify-cli/.cache` shows `600`
-- [ ] Self-reviewed
-- [ ] No known bugs or issues
+- [x] Code implemented and follows conventions
+- [~] All acceptance criteria met — automated portion complete; manual portion pending (see AC above)
+- [x] TC-01 and TC-03 written and passing via `uv run pytest`
+- [ ] Manual test: `uv run spotify-cli auth login` opens browser and writes cache — **pending live OAuth run**
+- [ ] Manual test: `stat -f "%A" ~/.config/spotify-cli/.cache` shows `600` — **pending live OAuth run**
+- [x] Self-reviewed
+- [x] No known bugs or issues
 
 ## Dependencies
 
@@ -139,4 +139,5 @@ def test_login_no_browser():
 ---
 
 **Created**: 2026-06-04
-**Status**: Ready for Sprint Planning
+**Completed**: 2026-06-08
+**Status**: ✅ Done
