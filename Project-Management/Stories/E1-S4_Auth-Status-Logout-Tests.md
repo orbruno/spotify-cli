@@ -39,9 +39,9 @@ Implement the `status` and `logout` commands in `auth/commands.py`, then write t
 
 ### Implementation Approach
 
-1. Implement `status()` in `auth/commands.py`: check `CACHE_PATH.exists()`; if missing, output `{"status": "missing"}`; otherwise call `get_auth_manager(open_browser=False).cache_handler.get_cached_token()`; compute `expires_in = int(token_info["expires_at"] - time.time())`; set `state = "valid" if expires_in > 0 else "expired"`; include `scopes` only when valid
+1. Implement `status()` in `auth/commands.py`: check `CACHE_PATH.exists()`; if missing, output `{"status": "missing"}`; otherwise call `get_cached_token()` (a `core/spotify_client.py` helper that reads the cache file directly via `CacheFileHandler` — no `SpotifyPKCE` instantiation, no `require_client_id()`); if it returns `None`, output `{"status": "missing"}`; otherwise compute `expires_in = int(token_info["expires_at"] - time.time())`; set `state = "valid" if expires_in > 0 else "expired"`; include `scopes` only when valid. `status()` is intentionally independent of `SPOTIFY_CLIENT_ID` — cache inspection is a pure file read.
 2. Implement `logout()` in `auth/commands.py`: if `CACHE_PATH.exists()` → `CACHE_PATH.unlink()` + `{"status": "logged_out"}`; else → `{"status": "no_session"}`; always exit 0
-3. Scaffold `tests/auth/test_auth_commands.py` with `CliRunner`, `autouse` fixture for `SPOTIFY_CLIENT_ID`, and all 8 test cases using `unittest.mock.patch`
+3. Scaffold `tests/auth/test_auth_commands.py` with `CliRunner`, `autouse` fixture for `SPOTIFY_CLIENT_ID`, and all 8 test cases using `unittest.mock.patch` — status tests patch `spotify_cli.auth.commands.get_cached_token` rather than `SpotifyPKCE`
 
 ### Code Examples (if helpful)
 
@@ -50,12 +50,15 @@ Implement the `status` and `logout` commands in `auth/commands.py`, then write t
 import json
 import time
 import typer
-from spotify_cli.core.spotify_client import CACHE_PATH, get_auth_manager, require_client_id
+from spotify_cli.core.spotify_client import CACHE_PATH, get_cached_token
 
 
 def status() -> None:
     """
     Print current token status as JSON.
+
+    Reads the cache file directly via ``CacheFileHandler`` and does not require
+    ``SPOTIFY_CLIENT_ID``; an absent or unreadable cache reports ``missing``.
 
     Usage: spotify-cli auth status
     Example: spotify-cli auth status
@@ -64,9 +67,7 @@ def status() -> None:
         typer.echo(json.dumps({"status": "missing"}))
         raise typer.Exit(code=0)
 
-    require_client_id()
-    auth_manager = get_auth_manager(open_browser=False)
-    token_info = auth_manager.cache_handler.get_cached_token()
+    token_info = get_cached_token()
 
     if token_info is None:
         typer.echo(json.dumps({"status": "missing"}))
@@ -96,6 +97,18 @@ def logout() -> None:
     else:
         typer.echo(json.dumps({"status": "no_session"}))
     raise typer.Exit(code=0)
+
+
+# core/spotify_client.py — get_cached_token() helper (added Sprint-02)
+def get_cached_token() -> dict | None:
+    """
+    Read the cached token from disk without instantiating SpotifyPKCE.
+
+    Returns the cached token dict or None. Does NOT require SPOTIFY_CLIENT_ID.
+    """
+    return spotipy.cache_handler.CacheFileHandler(
+        cache_path=str(CACHE_PATH)
+    ).get_cached_token()
 ```
 
 ```python
@@ -147,20 +160,17 @@ def test_login_no_browser():
     assert kwargs.get("open_browser") is False
 
 
-# TC-04: status with valid token
+# TC-04: status with valid token — patches the get_cached_token helper directly,
+# NOT SpotifyPKCE, because status() reads the cache via CacheFileHandler and never
+# instantiates SpotifyPKCE.
 def test_status_valid_token():
     mock_token = {
         "access_token": "tok",
         "expires_at": time.time() + 3600,
         "scope": "playlist-modify-public user-read-private",
     }
-    mock_handler = MagicMock()
-    mock_handler.get_cached_token.return_value = mock_token
-    mock_manager = MagicMock()
-    mock_manager.cache_handler = mock_handler
-
     with patch("spotify_cli.auth.commands.CACHE_PATH") as mock_path, \
-         patch("spotify_cli.core.spotify_client.SpotifyPKCE", return_value=mock_manager):
+         patch("spotify_cli.auth.commands.get_cached_token", return_value=mock_token):
         mock_path.exists.return_value = True
         result = runner.invoke(app, ["auth", "status"])
 
@@ -168,6 +178,7 @@ def test_status_valid_token():
     parsed = json.loads(result.output)
     assert parsed["status"] == "valid"
     assert parsed["expires_in_seconds"] > 0
+    assert parsed["scopes"] == ["playlist-modify-public", "user-read-private"]
 
 
 # TC-05: status with no cache file
@@ -198,31 +209,16 @@ def test_logout_no_cache():
     assert json.loads(result.output) == {"status": "no_session"}
 
 
-# TC-08: silent refresh — expired token refreshed without opening browser
-def test_silent_refresh(monkeypatch):
-    expired_token = {
-        "access_token": "old",
-        "expires_at": time.time() - 60,
-        "scope": "playlist-modify-public",
-        "refresh_token": "refresh-tok",
-    }
-    fresh_token = {
-        "access_token": "new",
-        "expires_at": time.time() + 3600,
-        "scope": "playlist-modify-public",
-    }
-    mock_handler = MagicMock()
-    mock_handler.get_cached_token.side_effect = [expired_token, fresh_token]
+# TC-08 (reworked): login() delegates to SpotifyPKCE.get_access_token(as_dict=False) —
+# this is the contract that lets Spotipy decide whether to use the cached token or
+# refresh silently. True silent-refresh behavior is owned by Spotipy and verified via
+# documented manual integration (see Sprints/Sprint-02/manual-verification.md).
+def test_login_invokes_get_access_token_as_dict_false():
     mock_manager = MagicMock()
-    mock_manager.cache_handler = mock_handler
-    mock_manager.get_access_token.return_value = "new"
-
-    with patch("spotify_cli.core.spotify_client.SpotifyPKCE", return_value=mock_manager) as mock_pkce:
+    with patch("spotify_cli.core.spotify_client.SpotifyPKCE", return_value=mock_manager):
         result = runner.invoke(app, ["auth", "login"])
-
     assert result.exit_code == 0
-    _, kwargs = mock_pkce.call_args
-    assert kwargs.get("open_browser") is not False  # browser=True by default (not headless)
+    mock_manager.get_access_token.assert_called_once_with(as_dict=False)
 ```
 
 ### Files/Components Affected
