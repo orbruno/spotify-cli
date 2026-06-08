@@ -115,6 +115,14 @@ Full end-to-end playlist creation flow from structured input. Ref: [SPEC-003](..
 
 ---
 
+## Tech Debt / Spec Corrections
+
+| ID | Item | Priority | Notes |
+|----|------|----------|-------|
+| TD-001 | Patch SPEC-001 §1.10 & §3.4 — remove `SPOTIFY_CLIENT_SECRET` from required env vars | Low | PKCE only needs `SPOTIFY_CLIENT_ID` (per ADR-001). Current wording is misleading for new contributors. Code already correct (`require_client_id()` only checks CLIENT_ID). Flagged in Sprint-02 plan; defer to a docs-only sweep. |
+
+---
+
 ## Status Legend
 
 - Complete
