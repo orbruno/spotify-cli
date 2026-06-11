@@ -2,7 +2,7 @@
 
 **Last Updated**: 2026-06-08
 **Stage**: Implementation
-**Sprint**: Sprint-02 (✅ complete) — next: Sprint-03 (EP-002 starts)
+**Sprint**: Sprint-03 (⏳ planned — E2-S1 + E2-S2, 8 pts; EP-002 starts)
 
 ---
 
@@ -148,4 +148,4 @@ For a story to be marked "Done":
 ---
 
 **Last Updated**: 2026-06-08
-**Next Action**: Run `scrum-sprint-plan` for Sprint-03 (EP-002 — E2-S1 Cache Module + E2-S2 Fetcher Module)
+**Next Action**: Execute Sprint-03 — `claude --worktree --dangerously-skip-permissions "Read Project-Management/Sprints/Sprint-03/autonomous-execution-plan.md and execute it wave by wave."`
