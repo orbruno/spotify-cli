@@ -47,5 +47,6 @@
 
 ---
 
-**PR**: TBD (filled at branch setup)
+**PR**: [#2 — Sprint 2026-W24: discography data layer](https://github.com/orbruno/spotify-cli/pull/2) (draft, stacked on `sprint/2026-W23`)
+**Branch**: `sprint/2026-W24`
 **Execution plan**: [autonomous-execution-plan.md](autonomous-execution-plan.md)
