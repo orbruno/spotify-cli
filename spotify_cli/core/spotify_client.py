@@ -51,3 +51,22 @@ def get_cached_token() -> dict | None:
     return spotipy.cache_handler.CacheFileHandler(
         cache_path=str(CACHE_PATH)
     ).get_cached_token()
+
+
+class NotAuthenticatedError(Exception):
+    """Raised when no cached Spotify token is available."""
+
+
+def get_spotify_client() -> spotipy.Spotify:
+    """
+    Return an authenticated spotipy.Spotify instance.
+
+    Raises NotAuthenticatedError if no cached token exists. Token refresh is
+    delegated to the SpotifyPKCE auth manager. Command-layer callers must run
+    require_client_id() first — this factory assumes SPOTIFY_CLIENT_ID is set.
+    """
+    if get_cached_token() is None:
+        raise NotAuthenticatedError(
+            "Not authenticated. Run 'spotify-cli auth login' first."
+        )
+    return spotipy.Spotify(auth_manager=get_auth_manager())

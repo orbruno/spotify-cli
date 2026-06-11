@@ -1,7 +1,7 @@
 # Sprint-03 Backlog — Spotify CLI
 
 **Sprint Goal**: The codebase can resolve an artist name, paginate their full album catalogue, stream flat track dicts as a generator, and cache results to disk with a 24h TTL.
-**Start**: TBD | **End**: TBD | **Status**: ⏳ Planned
+**Start**: 2026-06-11 | **End**: 2026-06-11 | **Status**: ✅ Done
 
 ---
 
@@ -9,10 +9,10 @@
 
 | Story | Title | Pts | Status | Notes |
 |-------|-------|-----|--------|-------|
-| E2-S1 | Cache Module | 3 | ⏳ Planned | Pure stdlib; atomic `.tmp` → `replace()`; `monkeypatch CACHE_DIR` in tests |
-| E2-S2 | Fetcher Module | 5 | ⏳ Planned | Generator semantics mandatory; 429 → 3 retries via `_call_with_retry` helper |
+| E2-S1 | Cache Module | 3 | ✅ Done | Pure stdlib; atomic `.tmp` → `replace()`; `monkeypatch CACHE_DIR` in tests |
+| E2-S2 | Fetcher Module | 5 | ✅ Done | Generator semantics mandatory; 429 → 3 retries via `_call_with_retry` helper |
 
-**Points**: 0 / 8 completed
+**Points**: 8 / 8 completed
 
 ---
 
@@ -36,15 +36,15 @@ E2-S1 and E2-S2 share no files (parallel-safe), but run sequentially in autonomo
 
 | Date | Outcome |
 |------|---------|
-| [To be filled during sprint] | |
+| 2026-06-11 | Waves 0–2 executed autonomously: foundation (`get_spotify_client` + `NotAuthenticatedError`), cache module (8 tests), fetcher module (15 tests). Full suite 39 passed; all 11 integration checks green. |
 
 ---
 
 ## Blockers
 
-- [ ] Sprint-02 baseline must be green: `uv run pytest tests/ -x -q` exits 0 (verified at planning: 14 passed)
-- [ ] `uv` available on PATH
-- [ ] No env vars required — all spotipy calls mocked in tests
+- [x] Sprint-02 baseline must be green: `uv run pytest tests/ -x -q` exits 0 (verified at planning: 14 passed)
+- [x] `uv` available on PATH
+- [x] No env vars required — all spotipy calls mocked in tests
 
 ---
 
@@ -52,12 +52,12 @@ E2-S1 and E2-S2 share no files (parallel-safe), but run sequentially in autonomo
 
 | Wave | Stories | Pts | Done |
 |------|---------|-----|------|
-| Wave 0 | Foundation (auth contract + package scaffolding) | — | 0 |
-| Wave 1 | E2-S1, E2-S2 | 8 | 0 |
-| Wave 2 | Integration verification | — | 0 |
-| **Total** | | **8** | **0** |
+| Wave 0 | Foundation (auth contract + package scaffolding) | — | ✅ |
+| Wave 1 | E2-S1, E2-S2 | 8 | 8 |
+| Wave 2 | Integration verification | — | ✅ |
+| **Total** | | **8** | **8** |
 
 ---
 
 **Last Updated**: 2026-06-11
-**Status**: ⏳ Planned
+**Status**: ✅ Done

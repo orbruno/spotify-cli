@@ -1,8 +1,8 @@
 # Product Backlog - Spotify CLI
 
-**Last Updated**: 2026-06-08
+**Last Updated**: 2026-06-11
 **Stage**: Implementation
-**Sprint**: Sprint-03 (⏳ planned — E2-S1 + E2-S2, 8 pts; EP-002 starts)
+**Sprint**: Sprint-03 (✅ complete) — next: Sprint-04 (E2-S3 + E2-S4)
 
 ---
 
@@ -16,7 +16,7 @@ Visual dependency flow for the project:
   - Blocks: EP-002, EP-003
 
 ### Phase 2: Data Access
-- **EP-002: Discography Browse** (16 pts) - ⏳ To Do
+- **EP-002: Discography Browse** (16 pts) - 🔄 In Progress
   - Depends on: EP-001
   - Blocks: EP-003
 
@@ -36,9 +36,9 @@ Visual dependency flow for the project:
 | Epic | Stories | Points | Complete | Status |
 |------|---------|--------|----------|--------|
 | EP-001: Authentication & Setup | 4 | 10 | 100% | ✅ Done |
-| EP-002: Discography Browse | 4 | 16 | 0% | ⏳ To Do |
+| EP-002: Discography Browse | 4 | 16 | 50% (8/16 pts) | 🔄 In Progress |
 | EP-003: Playlist Creation | 5 | 19 | 0% | ⏳ To Do |
-| **Total** | **13** | **45+** | **22%** | - |
+| **Total** | **13** | **45+** | **40%** | - |
 
 ### By Priority
 
@@ -73,8 +73,8 @@ Fetches and caches artist track catalogues from Spotify. Ref: [SPEC-002](../../_
 
 | ID | Story | Priority | Points | Status |
 |----|-------|----------|--------|--------|
-| [E2-S1](../Stories/E2-S1_Cache-Module.md) | Cache Module — file-based discography cache with 24h TTL | High | 3 | ⏳ To Do |
-| [E2-S2](../Stories/E2-S2_Fetcher-Module.md) | Fetcher Module — artist lookup, album pagination, track yield generator | High | 5 | ⏳ To Do |
+| [E2-S1](../Stories/E2-S1_Cache-Module.md) | Cache Module — file-based discography cache with 24h TTL | High | 3 | ✅ Done |
+| [E2-S2](../Stories/E2-S2_Fetcher-Module.md) | Fetcher Module — artist lookup, album pagination, track yield generator | High | 5 | ✅ Done |
 | [E2-S3](../Stories/E2-S3_Discography-Command.md) | Discography Command — Typer entrypoint, NDJSON streaming, structured errors | High | 5 | ⏳ To Do |
 | [E2-S4](../Stories/E2-S4_Discography-Tests.md) | Discography Tests — full test suite for cache, fetcher, and command | Medium | 3 | ⏳ To Do |
 
@@ -104,7 +104,7 @@ Full end-to-end playlist creation flow from structured input. Ref: [SPEC-003](..
 |--------|------|---------|--------|------|--------|
 | Sprint-01 | E1 | E1-S1, E1-S2 | 4 | Project scaffold + client factory | ✅ Complete |
 | Sprint-02 | E1 | E1-S3, E1-S4 | 6 | Full auth command suite + tests | ✅ Complete |
-| Sprint-03 | E2 | E2-S1, E2-S2 | 8 | Cache + fetcher | Planned |
+| Sprint-03 | E2 | E2-S1, E2-S2 | 8 | Cache + fetcher | ✅ Complete |
 | Sprint-04 | E2 | E2-S3, E2-S4 | 8 | Discography command + tests | Planned |
 | Sprint-05 | E3 | E3-S1, E3-S2, E3-S3 | 8 | Playlist pipeline (input/batch/resolver) | Planned |
 | Sprint-06 | E3 | E3-S4, E3-S5 | 11 | Playlist commands + tests | Planned |
@@ -147,5 +147,5 @@ For a story to be marked "Done":
 
 ---
 
-**Last Updated**: 2026-06-08
-**Next Action**: Execute Sprint-03 — `claude --worktree --dangerously-skip-permissions "Read Project-Management/Sprints/Sprint-03/autonomous-execution-plan.md and execute it wave by wave."`
+**Last Updated**: 2026-06-11
+**Next Action**: Plan Sprint-04 (E2-S3 Discography Command + E2-S4 Discography Tests) — generate its autonomous execution plan, then execute

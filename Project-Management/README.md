@@ -7,7 +7,7 @@ A Python CLI tool that allows AI agents to create Spotify playlists programmatic
 **Framework**: SCRUM Solo (adapted for individual work)
 **Developer**: Orlando Bruno
 **Sprint Duration**: 1 session
-**Current Focus**: Sprint-03 planned — discography data layer (cache + fetcher); EP-002 starts
+**Current Focus**: Sprint-03 complete — discography data layer (cache + fetcher) done; Sprint-04 (discography command + tests) next
 
 ## Structure
 
@@ -41,15 +41,15 @@ Project-Management/
 ## Current Status
 
 **Active Epic(s)**: EP-002: Discography Browse
-**Sprint**: Sprint-03 planned (E2-S1 Cache + E2-S2 Fetcher, 8 pts) — see `Sprints/Sprint-03/autonomous-execution-plan.md`. Sprint-02 manual verification still pending live OAuth; see `Sprints/Sprint-02/manual-verification.md`
-**Last Sprint Goal**: ✅ `spotify-cli auth login`, `auth status`, and `auth logout` all work as specified by automated tests; 14/14 pass, 100% coverage of `auth/` and `core/`. Live-OAuth checks (browser launch, cache perms 600, `--no-browser` URL/stdin flow, silent refresh) are tracked separately as manual verification.
+**Sprint**: Sprint-03 ✅ complete (E2-S1 Cache + E2-S2 Fetcher, 8/8 pts) — 39 tests green. Sprint-02 manual verification still pending live OAuth; see `Sprints/Sprint-02/manual-verification.md`
+**Last Sprint Goal**: ✅ Discography data layer done — cache module (24h TTL, atomic writes, corruption-as-miss) and fetcher module (artist resolution, album pagination, track generator, 429 retry) fully unit-tested; `get_spotify_client()`/`NotAuthenticatedError` auth contract added to `core/spotify_client.py` for Sprint-04.
 
 ### Progress Summary
 
 | Epic | Status | Progress |
 |------|--------|----------|
 | EP-001: Authentication & Setup | ✅ Done | 100% |
-| EP-002: Discography Browse | ⏳ Backlog | 0% |
+| EP-002: Discography Browse | 🔄 In Progress | 50% (8/16 pts) |
 | EP-003: Playlist Creation | ⏳ Backlog | 0% |
 
 ## Getting Started
@@ -100,5 +100,5 @@ One sprint = one working session. Each session follows:
 
 ---
 
-**Last Updated**: 2026-06-08
+**Last Updated**: 2026-06-11
 **Maintained by**: Orlando Bruno

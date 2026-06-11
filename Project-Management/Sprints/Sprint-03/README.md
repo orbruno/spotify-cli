@@ -2,8 +2,8 @@
 
 **Goal**: The codebase can resolve an artist name, paginate their full album catalogue, stream flat track dicts as a generator, and cache results to disk with a 24h TTL — the complete data layer that the `discography` command (Sprint-04) will orchestrate.
 
-**Status**: ⏳ Planned
-**Start**: TBD
+**Status**: ✅ Complete
+**Start**: 2026-06-11
 **Developer**: Orlando Bruno
 
 ---
@@ -36,14 +36,14 @@
 
 ## Definition of Done (Sprint Level)
 
-- [ ] `uv run pytest tests/ -q` exits 0 (full suite — 14 baseline tests + all new tests)
-- [ ] `uv run pytest tests/discography/test_cache.py -v` exits 0
-- [ ] `uv run pytest tests/discography/test_fetcher.py -v` exits 0
-- [ ] `uv run python -c "from spotify_cli.core.spotify_client import get_spotify_client, NotAuthenticatedError"` exits 0
-- [ ] `uv run python -c "from spotify_cli.discography import cache, fetcher"` exits 0
-- [ ] `uv run python -c "from inspect import isgeneratorfunction; from spotify_cli.discography.fetcher import iter_tracks; assert isgeneratorfunction(iter_tracks)"` exits 0
-- [ ] `uv run spotify-cli --help` exits 0 (CLI not broken)
-- [ ] No test touches the real home directory or the live Spotify API
+- [x] `uv run pytest tests/ -q` exits 0 (full suite — 39 passed: 14 baseline + 2 Wave 0 + 8 cache + 15 fetcher)
+- [x] `uv run pytest tests/discography/test_cache.py -v` exits 0
+- [x] `uv run pytest tests/discography/test_fetcher.py -v` exits 0
+- [x] `uv run python -c "from spotify_cli.core.spotify_client import get_spotify_client, NotAuthenticatedError"` exits 0
+- [x] `uv run python -c "from spotify_cli.discography import cache, fetcher"` exits 0
+- [x] `uv run python -c "from inspect import isgeneratorfunction; from spotify_cli.discography.fetcher import iter_tracks; assert isgeneratorfunction(iter_tracks)"` exits 0
+- [x] `uv run spotify-cli --help` exits 0 (CLI not broken)
+- [x] No test touches the real home directory or the live Spotify API
 
 ---
 
