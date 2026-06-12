@@ -1,8 +1,8 @@
 # Product Backlog - Spotify CLI
 
-**Last Updated**: 2026-06-05
+**Last Updated**: 2026-06-08
 **Stage**: Implementation
-**Sprint**: Sprint-01 (ready)
+**Sprint**: Sprint-02 (✅ complete) — next: Sprint-03 (EP-002 starts)
 
 ---
 
@@ -11,7 +11,7 @@
 Visual dependency flow for the project:
 
 ### Phase 1: Foundation
-- **EP-001: Authentication & Setup** (10 pts) - ⏳ To Do
+- **EP-001: Authentication & Setup** (10 pts) - ✅ Done
   - Depends on: None
   - Blocks: EP-002, EP-003
 
@@ -35,10 +35,10 @@ Visual dependency flow for the project:
 
 | Epic | Stories | Points | Complete | Status |
 |------|---------|--------|----------|--------|
-| EP-001: Authentication & Setup | 4 | 10 | 0% | ⏳ To Do |
+| EP-001: Authentication & Setup | 4 | 10 | 100% | ✅ Done |
 | EP-002: Discography Browse | 4 | 16 | 0% | ⏳ To Do |
 | EP-003: Playlist Creation | 5 | 19 | 0% | ⏳ To Do |
-| **Total** | **13** | **45+** | **0%** | - |
+| **Total** | **13** | **45+** | **22%** | - |
 
 ### By Priority
 
@@ -58,10 +58,10 @@ Implements PKCE OAuth 2.0 flow for Spotify. Ref: [SPEC-001](../../_Design/04_Spe
 
 | ID | Story | Priority | Points | Status |
 |----|-------|----------|--------|--------|
-| [E1-S1](../Stories/E1-S1_Project-Scaffold.md) | Project Scaffold — pyproject.toml, package structure, Typer entry point | High | 2 | ⏳ To Do |
-| [E1-S2](../Stories/E1-S2_Spotify-Client-Factory.md) | Spotify Client Factory — shared SpotifyPKCE factory, CACHE_PATH, env var guard | High | 2 | ⏳ To Do |
-| [E1-S3](../Stories/E1-S3_Auth-Login-Command.md) | Auth Login Command — PKCE browser flow, --no-browser headless mode | High | 3 | ⏳ To Do |
-| [E1-S4](../Stories/E1-S4_Auth-Status-Logout-Tests.md) | Auth Status & Logout + Tests — status/logout commands, full TC-01–TC-08 test suite | High | 3 | ⏳ To Do |
+| [E1-S1](../Stories/E1-S1_Project-Scaffold.md) | Project Scaffold — pyproject.toml, package structure, Typer entry point | High | 2 | ✅ Done |
+| [E1-S2](../Stories/E1-S2_Spotify-Client-Factory.md) | Spotify Client Factory — shared SpotifyPKCE factory, CACHE_PATH, env var guard | High | 2 | ✅ Done |
+| [E1-S3](../Stories/E1-S3_Auth-Login-Command.md) | Auth Login Command — PKCE browser flow, --no-browser headless mode | High | 3 | ✅ Done |
+| [E1-S4](../Stories/E1-S4_Auth-Status-Logout-Tests.md) | Auth Status & Logout + Tests — status/logout commands, full TC-01–TC-08 test suite | High | 3 | ✅ Done |
 
 **Epic Total**: 10 points
 
@@ -102,8 +102,8 @@ Full end-to-end playlist creation flow from structured input. Ref: [SPEC-003](..
 
 | Sprint | Epic | Stories | Points | Goal | Status |
 |--------|------|---------|--------|------|--------|
-| Sprint-01 | E1 | E1-S1, E1-S2 | 4 | Project scaffold + client factory | Ready |
-| Sprint-02 | E1 | E1-S3, E1-S4 | 6 | Full auth command suite + tests | Planned |
+| Sprint-01 | E1 | E1-S1, E1-S2 | 4 | Project scaffold + client factory | ✅ Complete |
+| Sprint-02 | E1 | E1-S3, E1-S4 | 6 | Full auth command suite + tests | ✅ Complete |
 | Sprint-03 | E2 | E2-S1, E2-S2 | 8 | Cache + fetcher | Planned |
 | Sprint-04 | E2 | E2-S3, E2-S4 | 8 | Discography command + tests | Planned |
 | Sprint-05 | E3 | E3-S1, E3-S2, E3-S3 | 8 | Playlist pipeline (input/batch/resolver) | Planned |
@@ -112,6 +112,14 @@ Full end-to-end playlist creation flow from structured input. Ref: [SPEC-003](..
 
 **Sprint backlogs**: See `../Sprints/` for individual sprint backlog files.
 **Master overview**: See `../Sprints/sprint-planning-overview.md` for full roadmap and capacity notes.
+
+---
+
+## Tech Debt / Spec Corrections
+
+| ID | Item | Priority | Notes |
+|----|------|----------|-------|
+| TD-001 | Patch SPEC-001 §1.10 & §3.4 — remove `SPOTIFY_CLIENT_SECRET` from required env vars | Low | PKCE only needs `SPOTIFY_CLIENT_ID` (per ADR-001). Current wording is misleading for new contributors. Code already correct (`require_client_id()` only checks CLIENT_ID). Flagged in Sprint-02 plan; defer to a docs-only sweep. |
 
 ---
 
@@ -139,5 +147,5 @@ For a story to be marked "Done":
 
 ---
 
-**Last Updated**: 2026-06-05
-**Next Action**: Execute Sprint-01 (E1-S1 + E1-S2)
+**Last Updated**: 2026-06-08
+**Next Action**: Run `scrum-sprint-plan` for Sprint-03 (EP-002 — E2-S1 Cache Module + E2-S2 Fetcher Module)
