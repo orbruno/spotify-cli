@@ -4,7 +4,7 @@
 **Story ID**: E2-S2
 **Story Points**: 5
 **Priority**: High
-**Status**: To Do
+**Status**: ✅ Done
 
 ## User Story
 
@@ -18,13 +18,13 @@ Create `spotify_cli/discography/fetcher.py` — a pure Python module that handle
 
 ## Acceptance Criteria
 
-- [ ] `resolve_artist(sp, name)` returns `{id, name}` for a valid artist name
-- [ ] Artist not found — `ArtistNotFoundError` is raised (not a crash or silent failure)
-- [ ] `fetch_albums(sp, artist_id, ...)` paginates through all pages when `page_all=True` (not just first 50)
-- [ ] `--from-year` / `--to-year` filters applied correctly by `apply_year_filter()`; albums outside range excluded
-- [ ] `--album-type single` returns only singles; album tracks are absent from output
-- [ ] `iter_tracks()` is a generator — it does not load all tracks into memory before yielding the first
-- [ ] HTTP 429 triggers sleep using `Retry-After` header value, retried up to 3 times before raising
+- [x] `resolve_artist(sp, name)` returns `{id, name}` for a valid artist name
+- [x] Artist not found — `ArtistNotFoundError` is raised (not a crash or silent failure)
+- [x] `fetch_albums(sp, artist_id, ...)` paginates through all pages when `page_all=True` (not just first 50)
+- [x] `--from-year` / `--to-year` filters applied correctly by `apply_year_filter()`; albums outside range excluded
+- [x] `--album-type single` returns only singles; album tracks are absent from output
+- [x] `iter_tracks()` is a generator — it does not load all tracks into memory before yielding the first
+- [x] HTTP 429 triggers sleep using `Retry-After` header value, retried up to 3 times before raising
 
 ## Technical Notes
 
@@ -140,12 +140,12 @@ def test_iter_tracks_is_generator():
 
 ## Definition of Done
 
-- [ ] Code implemented and follows conventions
-- [ ] All acceptance criteria met
-- [ ] Tests written and passing (`uv run pytest tests/discography/test_fetcher.py -v`)
-- [ ] Spotipy fully mocked — no live API calls in tests
-- [ ] Self-reviewed
-- [ ] No known bugs or issues
+- [x] Code implemented and follows conventions
+- [x] All acceptance criteria met
+- [x] Tests written and passing (`uv run pytest tests/discography/test_fetcher.py -v`)
+- [x] Spotipy fully mocked — no live API calls in tests
+- [x] Self-reviewed
+- [x] No known bugs or issues
 
 ## Dependencies
 
@@ -171,4 +171,4 @@ def test_iter_tracks_is_generator():
 ---
 
 **Created**: 2026-06-04
-**Status**: Ready for Sprint Planning
+**Status**: ✅ Done (Sprint-03, 2026-06-11)

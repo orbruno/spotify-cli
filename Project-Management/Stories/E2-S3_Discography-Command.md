@@ -48,7 +48,7 @@ from typing import Optional
 
 import typer
 
-from spotify_cli.auth.spotify_client import get_spotify_client, NotAuthenticatedError
+from spotify_cli.core.spotify_client import get_spotify_client, NotAuthenticatedError
 from spotify_cli.discography import cache
 from spotify_cli.discography.fetcher import (
     ArtistNotFoundError,
@@ -173,7 +173,7 @@ app.add_typer(discography_app)
 ### External Dependencies
 
 - `typer` — CLI framework (already in `pyproject.toml`)
-- `spotify_cli.auth.spotify_client` — `get_spotify_client()`, `NotAuthenticatedError` (SPEC-001)
+- `spotify_cli.core.spotify_client` — `get_spotify_client()`, `NotAuthenticatedError` (delivered in Sprint-03 Wave 0; canonical location — SPEC-002's reference to an auth-package client module is a stale spec error)
 - `spotify_cli.discography.cache` — E2-S1
 - `spotify_cli.discography.fetcher` — E2-S2
 

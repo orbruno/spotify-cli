@@ -4,7 +4,7 @@
 **Story ID**: E2-S1
 **Story Points**: 3
 **Priority**: High
-**Status**: To Do
+**Status**: ✅ Done
 
 ## User Story
 
@@ -18,13 +18,13 @@ Create `spotify_cli/discography/cache.py` — a pure stdlib module that stores a
 
 ## Acceptance Criteria
 
-- [ ] Cache miss — `is_valid()` returns False when file does not exist
-- [ ] After `write()` — `is_valid()` returns True and `read()` returns the same tracks list
-- [ ] TTL expired (>24h since `cached_at`) — `is_valid()` returns False
-- [ ] Atomic write — data is written to a `.tmp` file then renamed to the final path; no partial file visible to readers
-- [ ] Corrupt JSON cache file — `is_valid()` returns False (treated as miss, not exception); `read()` returns empty list
-- [ ] `clear()` removes all files in `~/.config/spotify-cli/cache/discography/`
-- [ ] Unit tests cover all above scenarios
+- [x] Cache miss — `is_valid()` returns False when file does not exist
+- [x] After `write()` — `is_valid()` returns True and `read()` returns the same tracks list
+- [x] TTL expired (>24h since `cached_at`) — `is_valid()` returns False
+- [x] Atomic write — data is written to a `.tmp` file then renamed to the final path; no partial file visible to readers
+- [x] Corrupt JSON cache file — `is_valid()` returns False (treated as miss, not exception); `read()` returns empty list
+- [x] `clear()` removes all files in `~/.config/spotify-cli/cache/discography/`
+- [x] Unit tests cover all above scenarios
 
 ## Technical Notes
 
@@ -141,11 +141,11 @@ def test_is_valid_returns_false_when_ttl_expired(tmp_path, monkeypatch):
 
 ## Definition of Done
 
-- [ ] Code implemented and follows conventions
-- [ ] All acceptance criteria met
-- [ ] Tests written and passing (`uv run pytest tests/discography/test_cache.py -v`)
-- [ ] Self-reviewed
-- [ ] No known bugs or issues
+- [x] Code implemented and follows conventions
+- [x] All acceptance criteria met
+- [x] Tests written and passing (`uv run pytest tests/discography/test_cache.py -v`)
+- [x] Self-reviewed
+- [x] No known bugs or issues
 
 ## Dependencies
 
@@ -171,4 +171,4 @@ def test_is_valid_returns_false_when_ttl_expired(tmp_path, monkeypatch):
 ---
 
 **Created**: 2026-06-04
-**Status**: Ready for Sprint Planning
+**Status**: ✅ Done (Sprint-03, 2026-06-11)
