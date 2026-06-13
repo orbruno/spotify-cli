@@ -9,27 +9,27 @@
 ## User Story
 
 As a **developer**,
-I want a **full test suite for the discography module**,
-So that **cache logic, API traversal, and command output are all verified before the command is shipped**.
+I want a **command-level test suite and coverage gate for the discography package**,
+So that **command behavior, the cache + fetcher + command integration, and the package coverage threshold are all verified before the command is shipped**.
 
 ## Description
 
-Write the complete test suite for the `spotify_cli/discography/` package: three test files covering `cache.py`, `fetcher.py`, and `commands.py`. All 12 test cases from SPEC-002 (TC-01 through TC-12) must be implemented. Spotipy is fully mocked — no live API calls. Cache tests use `monkeypatch` to redirect `CACHE_DIR` to a temp directory. Command tests use Typer's `CliRunner`.
+Complete the test suite for the `spotify_cli/discography/` package. The unit suites for `cache.py` and `fetcher.py` were **delivered in Sprint-03** (`tests/discography/test_cache.py`, 8 tests; `tests/discography/test_fetcher.py`, 15 tests) — do not recreate them. This story adds `tests/discography/test_commands.py` covering the command-level test cases from SPEC-002, verifies the cache → fetch → cache-write → NDJSON-stream integration, and enforces the ≥80% coverage gate for the whole discography package. Spotipy is fully mocked — no live API calls. Command tests use Typer's `CliRunner`.
 
 ## Acceptance Criteria
 
-- [ ] All TC-01 through TC-11 from SPEC-002 pass via `uv run pytest tests/discography/ -v`
-- [ ] Cache TTL expiry is tested with mocked `datetime.now()` (no real-time waiting)
+- [ ] All TC-01 through TC-11 from SPEC-002 pass via `uv run pytest tests/discography/ -v` (TC-08, TC-09, TC-11 already pass via the Sprint-03 cache/fetcher suites)
+- [ ] Command test cases (TC-01–TC-07, TC-10, TC-12) implemented in `tests/discography/test_commands.py`
 - [ ] Spotipy is fully mocked — no live API calls in any test
 - [ ] Coverage ≥ 80% for all discography modules (`commands.py`, `fetcher.py`, `cache.py`)
 - [ ] Invalid `--album-type` value — exit 3 is tested (TC-10)
-- [ ] Corrupt cache treated as miss — tested (TC-11)
+- [ ] Cache + fetcher + command integration verified: cache-miss path calls fetcher and writes cache; cache-hit path makes zero API calls
 
 ## Technical Notes
 
 ### Implementation Approach
 
-Three test files, one per module. Test isolation via `monkeypatch` for cache dir and `unittest.mock.patch` for spotipy and auth. Command tests use `typer.testing.CliRunner` to invoke the command in-process.
+One new test file: `tests/discography/test_commands.py` (the cache and fetcher suites already exist from Sprint-03 — extend them only if a TC gap is found). Test isolation via `unittest.mock.patch` for spotipy and auth (stdlib only — pytest-mock is not a dependency). Command tests use `typer.testing.CliRunner` to invoke the command in-process. Finish with the package-wide coverage gate.
 
 ### Test Matrix
 
@@ -42,112 +42,20 @@ Three test files, one per module. Test isolation via `monkeypatch` for cache dir
 | TC-05 | `--from-year 1960 --to-year 1970` → only tracks from that decade | `test_commands.py` | Mock albums with mixed release years |
 | TC-06 | `--album-type single` → only singles in output | `test_commands.py` | Mock fetch_albums to verify arg passed |
 | TC-07 | Not authenticated → stderr JSON `error: not authenticated`, exits 1 | `test_commands.py` | raise NotAuthenticatedError in mock |
-| TC-08 | Cache expired (>24h) → treated as miss, fetch fresh, exits 0 | `test_cache.py` | monkeypatch datetime.now |
-| TC-09 | `--page-all` on artist with 60+ albums → streams all tracks | `test_fetcher.py` | Mock sp.next to return second page |
+| TC-08 | Cache expired (>24h) → treated as miss, fetch fresh, exits 0 | `test_cache.py` | ✅ Done (Sprint-03) — past `cached_at` timestamp, no datetime patching |
+| TC-09 | `--page-all` on artist with 60+ albums → streams all tracks | `test_fetcher.py` | ✅ Done (Sprint-03) — `sp.next` returns second page |
 | TC-10 | `--album-type invalid-value` → stderr JSON `error: validation error`, exits 3 | `test_commands.py` | Invoke with bad --album-type value |
-| TC-11 | Cache file corrupt (invalid JSON) → cache miss, fetches fresh | `test_cache.py` | Write corrupt JSON to cache file |
+| TC-11 | Cache file corrupt (invalid JSON) → cache miss, fetches fresh | `test_cache.py` | ✅ Done (Sprint-03) — corrupt JSON written to cache file |
 | TC-12 | stdout piped (not TTY) → valid NDJSON, no ANSI codes | `test_commands.py` | CliRunner captures stdout, validate JSON |
 
+### Existing Suites (delivered in Sprint-03 — do not recreate)
+
+- `tests/discography/test_cache.py` — 8 tests: miss, write→read roundtrip, TTL expiry (past `cached_at` timestamp), corrupt JSON as miss, missing `cached_at` key, atomic write, `clear()`, missing-file read. All isolated via `monkeypatch.setattr(cache_mod, "CACHE_DIR", tmp_path)`.
+- `tests/discography/test_fetcher.py` — 15 tests: artist resolution, pagination (`page_all` on/off), album-type mapping, year filter (all three date formats), generator semantics, full 429 retry contract. All mocking via stdlib `unittest.mock` (`MagicMock`, `patch`).
+
+Extend these files only if a SPEC-002 TC gap is discovered; this story's new work is `test_commands.py`.
+
 ### Code Examples
-
-```python
-# tests/discography/test_cache.py — representative tests
-import json
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
-import pytest
-from unittest.mock import patch
-
-from spotify_cli.discography import cache as cache_mod
-
-
-def test_is_valid_returns_false_when_no_file(tmp_path, monkeypatch):
-    monkeypatch.setattr(cache_mod, "CACHE_DIR", tmp_path)
-    assert cache_mod.is_valid("nonexistent") is False
-
-
-def test_write_then_read_returns_same_tracks(tmp_path, monkeypatch):
-    monkeypatch.setattr(cache_mod, "CACHE_DIR", tmp_path)
-    tracks = [{"uri": "spotify:track:001", "name": "Hurt"}]
-    cache_mod.write("abc", "Johnny Cash", tracks)
-    assert cache_mod.is_valid("abc") is True
-    assert cache_mod.read("abc") == tracks
-
-
-def test_is_valid_returns_false_when_ttl_expired(tmp_path, monkeypatch):
-    monkeypatch.setattr(cache_mod, "CACHE_DIR", tmp_path)
-    expired_at = (datetime.now(timezone.utc) - timedelta(seconds=86401)).isoformat().replace("+00:00", "Z")
-    payload = {"artist_id": "abc", "artist_name": "Test", "cached_at": expired_at, "ttl_seconds": 86400, "tracks": []}
-    (tmp_path / "abc.json").write_text(json.dumps(payload))
-    assert cache_mod.is_valid("abc") is False
-
-
-def test_corrupt_cache_file_treated_as_miss(tmp_path, monkeypatch):
-    monkeypatch.setattr(cache_mod, "CACHE_DIR", tmp_path)
-    (tmp_path / "abc.json").write_text("not valid json{{{")
-    assert cache_mod.is_valid("abc") is False
-    assert cache_mod.read("abc") == []
-
-
-def test_write_uses_atomic_tmp_then_rename(tmp_path, monkeypatch):
-    monkeypatch.setattr(cache_mod, "CACHE_DIR", tmp_path)
-    cache_mod.write("abc", "Johnny Cash", [])
-    assert (tmp_path / "abc.json").exists()
-    assert not (tmp_path / "abc.tmp").exists()
-
-
-def test_clear_removes_all_cache_files(tmp_path, monkeypatch):
-    monkeypatch.setattr(cache_mod, "CACHE_DIR", tmp_path)
-    cache_mod.write("abc", "Johnny Cash", [])
-    cache_mod.write("def", "Bob Dylan", [])
-    cache_mod.clear()
-    assert list(tmp_path.glob("*.json")) == []
-```
-
-```python
-# tests/discography/test_fetcher.py — representative tests
-from unittest.mock import MagicMock
-import pytest
-from spotify_cli.discography.fetcher import (
-    resolve_artist, ArtistNotFoundError, fetch_albums, apply_year_filter, iter_tracks
-)
-
-
-def test_resolve_artist_returns_id_and_name():
-    sp = MagicMock()
-    sp.search.return_value = {"artists": {"items": [{"id": "abc123", "name": "Johnny Cash"}]}}
-    result = resolve_artist(sp, "Johnny Cash")
-    assert result == {"id": "abc123", "name": "Johnny Cash"}
-
-
-def test_resolve_artist_raises_when_not_found():
-    sp = MagicMock()
-    sp.search.return_value = {"artists": {"items": []}}
-    with pytest.raises(ArtistNotFoundError, match="No Spotify artist matched"):
-        resolve_artist(sp, "Nonexistent Artist XYZ")
-
-
-def test_fetch_albums_paginates_when_page_all(mocker):
-    sp = MagicMock()
-    page1 = {"items": [{"id": "alb1"}], "next": "url"}
-    page2 = {"items": [{"id": "alb2"}], "next": None}
-    sp.artist_albums.return_value = page1
-    sp.next.return_value = page2
-    albums = fetch_albums(sp, "artist1", page_all=True)
-    assert len(albums) == 2
-    sp.next.assert_called_once()
-
-
-def test_apply_year_filter_excludes_out_of_range():
-    albums = [
-        {"id": "a1", "release_date": "1959-01-01"},
-        {"id": "a2", "release_date": "1965-06-15"},
-        {"id": "a3", "release_date": "1971-03-20"},
-    ]
-    result = apply_year_filter(albums, from_year=1960, to_year=1970)
-    assert len(result) == 1
-    assert result[0]["id"] == "a2"
-```
 
 ```python
 # tests/discography/test_commands.py — TC-01 and TC-07 representative
@@ -155,7 +63,7 @@ from typer.testing import CliRunner
 from unittest.mock import patch, MagicMock
 from spotify_cli.discography.commands import app
 from spotify_cli.discography.fetcher import ArtistNotFoundError
-from spotify_cli.auth.spotify_client import NotAuthenticatedError
+from spotify_cli.core.spotify_client import NotAuthenticatedError
 import json
 
 runner = CliRunner()
@@ -190,17 +98,18 @@ def test_browse_not_authenticated_exits_1():
 
 ### Files/Components Affected
 
-- `tests/discography/__init__.py` — new file (empty, marks test package)
-- `tests/discography/test_cache.py` — new file (Phase 1 tests)
-- `tests/discography/test_fetcher.py` — new file (Phase 2 tests)
-- `tests/discography/test_commands.py` — new file (TC-01 through TC-12)
+- `tests/discography/__init__.py` — ✅ exists (Sprint-03)
+- `tests/discography/test_cache.py` — ✅ exists (Sprint-03); extend only if a TC gap is found
+- `tests/discography/test_fetcher.py` — ✅ exists (Sprint-03); extend only if a TC gap is found
+- `tests/discography/test_commands.py` — new file (command TCs: TC-01–TC-07, TC-10, TC-12)
 
 ### External Dependencies
 
 - `pytest` — test runner (`uv run pytest`)
 - `pytest-cov` — coverage reporting (`--cov=spotify_cli/discography`)
-- `unittest.mock` — stdlib mocking for spotipy and cache
+- `unittest.mock` — stdlib mocking for spotipy, auth, and cache (pytest-mock is NOT a dependency and must not be added)
 - `typer.testing.CliRunner` — in-process CLI invocation
+- `spotify_cli.core.spotify_client` — `get_spotify_client()`, `NotAuthenticatedError` (canonical location, delivered in Sprint-03 Wave 0)
 
 ## Definition of Done
 
@@ -214,8 +123,8 @@ def test_browse_not_authenticated_exits_1():
 ## Dependencies
 
 **Depends On**:
-- E2-S1: Cache Module — tests import `spotify_cli.discography.cache`
-- E2-S2: Fetcher Module — tests import `spotify_cli.discography.fetcher`
+- E2-S1: Cache Module — ✅ Done (Sprint-03), including `test_cache.py`
+- E2-S2: Fetcher Module — ✅ Done (Sprint-03), including `test_fetcher.py`
 - E2-S3: Discography Command — tests invoke `spotify_cli.discography.commands.app`
 
 **Blocks**:
@@ -223,15 +132,15 @@ def test_browse_not_authenticated_exits_1():
 
 ## Related Stories
 
-- E2-S1: Cache Module — `test_cache.py` is this story's primary deliverable for S1
-- E2-S2: Fetcher Module — `test_fetcher.py` is this story's primary deliverable for S2
-- E2-S3: Discography Command — `test_commands.py` is this story's primary deliverable for S3
+- E2-S1: Cache Module — `test_cache.py` delivered with S1 in Sprint-03
+- E2-S2: Fetcher Module — `test_fetcher.py` delivered with S2 in Sprint-03
+- E2-S3: Discography Command — `test_commands.py` is this story's primary deliverable
 
 ## Notes
 
 - `CliRunner` from Typer captures stdout and stderr in `result.output`. Note that by default `mix_stderr=True` — set `mix_stderr=False` on `CliRunner()` if you need to assert on stderr separately from stdout.
 - Use `monkeypatch.setattr(cache_mod, "CACHE_DIR", tmp_path)` — not `monkeypatch.setattr(cache_mod, "cache_path", ...)` — so that `CACHE_DIR` is redirected at the module level and all path operations derive from it consistently.
-- TC-08 (cache TTL expiry) does not require `time.sleep` — monkeypatch `datetime.now` to return a time 25 hours in the past.
+- TC-08 (cache TTL expiry) is already covered in Sprint-03's `test_cache.py` — by writing a `cached_at` timestamp 86401s in the past; no `time.sleep` and no datetime patching needed.
 - TC-12 (no ANSI in piped output): `CliRunner` simulates a non-TTY environment by default, so `sys.stdout.isatty()` returns False during tests.
 
 ---
