@@ -4,7 +4,7 @@
 **Story ID**: E1-S2
 **Story Points**: 2
 **Priority**: High
-**Status**: To Do
+**Status**: ✅ Done
 
 ## User Story
 
@@ -118,4 +118,4 @@ def get_auth_manager(open_browser: bool = True) -> SpotifyPKCE:
 ---
 
 **Created**: 2026-06-04
-**Status**: Ready for Sprint Planning
+**Status**: ✅ Done — 2026-06-05

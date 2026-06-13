@@ -4,7 +4,7 @@
 **Story ID**: E1-S1
 **Story Points**: 2
 **Priority**: High
-**Status**: To Do
+**Status**: ✅ Done
 
 ## User Story
 
@@ -123,4 +123,4 @@ if __name__ == "__main__":
 ---
 
 **Created**: 2026-06-04
-**Status**: Ready for Sprint Planning
+**Status**: ✅ Done — 2026-06-05

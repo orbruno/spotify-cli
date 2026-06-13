@@ -12,7 +12,7 @@
 
 | Sprint | Epic | Stories | Points | Goal | Status |
 |--------|------|---------|--------|------|--------|
-| Sprint-01 | E1 | E1-S1, E1-S2 | 4 | Project scaffold + client factory | Ready |
+| Sprint-01 | E1 | E1-S1, E1-S2 | 4 | Project scaffold + client factory | Done |
 | Sprint-02 | E1 | E1-S3, E1-S4 | 6 | Full auth command suite + tests | Planned |
 | Sprint-03 | E2 | E2-S1, E2-S2 | 8 | Cache + fetcher | Planned |
 | Sprint-04 | E2 | E2-S3, E2-S4 | 8 | Discography command + tests | Planned |
@@ -38,7 +38,7 @@ Sprint-01 (scaffold)
 ## Sprint Details
 
 ### Sprint-01 — Project Scaffold + Client Factory
-**Points**: 4 | **Status**: Ready | **Date**: 2026-06-05
+**Points**: 4 | **Status**: Done | **Date**: 2026-06-05
 **Stories**: E1-S1 (2 pts), E1-S2 (2 pts)
 **Deliverables**:
 - `uv run spotify-cli --help` and `--version` work
